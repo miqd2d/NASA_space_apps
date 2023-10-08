@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Weather Information</title>
+    <title>Rocket Launch Weather</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
+            background-color: #040c24; /* #040c24 - Dark Blue */
             margin: 0;
             padding: 0;
             display: flex;
@@ -16,15 +16,15 @@
             min-height: 100vh;
         }
         .container {
-            max-width: 600px;
+            max-width: 800px;
             padding: 20px;
-            background-color: #fff;
+            background-color: #9da5bd; /* #9da5bd - Light Grayish Blue */
             border-radius: 5px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
             text-align: center;
         }
         h1 {
-            color: #333;
+            color: #3a4c7a; /* #3a4c7a - Light Blue */
         }
         input[type="text"] {
             width: 70%;
@@ -33,9 +33,9 @@
             border-radius: 5px;
         }
         button {
-            padding: 10px 20px;
-            background-color: #007bff;
-            color: #fff;
+            padding: 10px 30px;
+            background-color: #3a4c7a; /* #007bff - Blue */
+            color: #fff; /* #ffffff - White */
             border: none;
             border-radius: 5px;
             cursor: pointer;
@@ -43,6 +43,7 @@
         table {
             width: 100%;
             border-collapse: collapse;
+            background-color: #f2f2f2;
             margin-top: 20px;
         }
         th, td {
@@ -51,32 +52,36 @@
             text-align: left;
         }
         th {
-            background-color: #f2f2f2;
+            background-color: #f2f2f2; /* #f2f2f2 - Light Gray */
         }
-        .satisfied {
-            background-color: #92D050;
-            color: white;
+        .green {
+            color: green;
         }
-        .not-satisfied {
-            background-color: #FF7F7F;
-            color: white;
+        .red {
+            color: red;
         }
         .error-message {
-            background-color: #FF7F7F;
-            color: white;
+            background-color: #3a4c7a; /* #FF7F7F - Light Red */
+            color: #fff; /* #ffffff - White */
             padding: 10px;
             border-radius: 5px;
             margin-top: 10px;
             font-weight: bold;
         }
+        .best-launch-time {
+            margin-top: 20px;
+        }
     </style>
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
 </head>
 <body>
+    <div id="particles-js"></div>
+
     <div class="container">
-        <h1>Weather Information</h1>
+        <h1>Rocket Launch Weather</h1>
         <div>
             <input type="text" id="city" placeholder="Enter city name" />
-            <button onclick="getWeather()">Get Weather</button>
+            <button onclick="getWeatherData()">Get Weather</button>
         </div>
         <div id="error" class="error-message"></div>
         <h2>Weather Conditions</h2>
@@ -87,47 +92,160 @@
                 <th>Live Condition</th>
             </tr>
             <tr>
-                <td>Temperature</td>
+                <td>Temperature (K)</td>
                 <td>273.15 to 313.15</td>
                 <td id="temperature"></td>
             </tr>
             <tr>
                 <td>Cloud Cover</td>
                 <td>&lt; 10%</td>
-                <td id="cloudCover"></td>
+                <td id="cloud-cover"></td>
             </tr>
             <tr>
-                <td>Wind Speed</td>
+                <td>Wind Speed (m/s)</td>
                 <td>&lt; 9 m/s</td>
-                <td id="windSpeed"></td>
+                <td id="wind-speed"></td>
             </tr>
             <tr>
                 <td>Sky</td>
                 <td>Clear Sky</td>
                 <td id="sky"></td>
             </tr>
-            <tr>
-                <td>Lightning Risk</td>
-                <td>No Risk/False</td>
-                <td id="lightningRisk"></td>
-            </tr>
         </table>
-
         <h2>Launch Suitability</h2>
-        <p id="launchSuitability"></p>
+        <p id="launch-suitability"></p>
+        <h2>Next Launch Time</h2>
+        <p id="next-launch-time"></p>
+        <h2 class="best-launch-time">Best Launch Time (Next 4 Days)</h2>
+        <p id="best-launch-info"></p>
     </div>
 
     <script>
+        particlesJS('particles-js', {
+        particles: {
+            number: {
+                value: 200, // Increased density
+                density: {
+                    enable: true,
+                    value_area: 800
+                }
+            },
+            color: {
+                value: '#ffffff' // White particles
+            },
+            shape: {
+                type: 'circle',
+                stroke: {
+                    width: 0,
+                    color: '#000000'
+                },
+                polygon: {
+                    nb_sides: 5
+                },
+                image: {
+                    src: 'img/github.svg',
+                    width: 100,
+                    height: 100
+                }
+            },
+            opacity: {
+                value: 0.5,
+                random: true,
+                anim: {
+                    enable: true,
+                    speed: 1,
+                    opacity_min: 0.1,
+                    sync: false
+                }
+            },
+            size: {
+                value: 5,
+                random: true,
+                anim: {
+                    enable: false,
+                    speed: 40,
+                    size_min: 0.1,
+                    sync: false
+                }
+            },
+            line_linked: {
+                enable: true,
+                distance: 150,
+                color: '#ffffff',
+                opacity: 0.4,
+                width: 1
+            },
+            move: {
+                enable: true,
+                speed: 6,
+                direction: 'none',
+                random: false,
+                straight: false,
+                out_mode: 'out',
+                bounce: false,
+                attract: {
+                    enable: false,
+                    rotateX: 600,
+                    rotateY: 1200
+                }
+            }
+        },
+        interactivity: {
+            detect_on: 'canvas',
+            events: {
+                onhover: {
+                    enable: true,
+                    mode: 'repulse'
+                },
+                onclick: {
+                    enable: true,
+                    mode: 'push'
+                },
+                resize: true
+            },
+            modes: {
+                grab: {
+                    distance: 900,
+                    line_linked: {
+                        opacity: 1
+                    }
+                },
+                bubble: {
+                    distance: 200,
+                    size: 40,
+                    duration: 6,
+                    opacity: 8,
+                    speed: 3
+                },
+                repulse: {
+                    distance: 200
+                },
+                push: {
+                    particles_nb: 4
+                },
+                remove: {
+                    particles_nb: 2
+                }
+            }
+        },
+        retina_detect: true
+    });
         function clearWeatherData() {
             document.getElementById("temperature").textContent = "";
-            document.getElementById("cloudCover").textContent = "";
-            document.getElementById("windSpeed").textContent = "";
+            document.getElementById("cloud-cover").textContent = "";
+            document.getElementById("wind-speed").textContent = "";
             document.getElementById("sky").textContent = "";
-            document.getElementById("lightningRisk").textContent = "";
         }
 
-        function getWeather() {
-            clearWeatherData(); // Clear existing data
+        function clearLaunchInfo() {
+            document.getElementById("launch-suitability").textContent = "";
+            document.getElementById("next-launch-time").textContent = "";
+            document.getElementById("best-launch-info").textContent = "";
+        }
+
+        function getWeatherData() {
+            clearWeatherData();
+            clearLaunchInfo(); // Clear launch-related info
 
             const city = document.getElementById("city").value;
             const api_key = '55d3ce7f471db6d3c8f884a9e8d6ff02';
@@ -145,6 +263,8 @@
                     document.getElementById("error").textContent = "";
                     updateWeatherTable(data);
                     checkLaunchSuitability(data);
+                    getNextLaunchTime();
+                    getBestLaunchTime();
                 })
                 .catch(error => {
                     document.getElementById("error").textContent = "Error: Unable to determine weather conditions.";
@@ -153,47 +273,83 @@
         }
 
         function updateWeatherTable(weatherData) {
-            const temperature = weatherData.main.temp;
-            const cloudCover = weatherData.clouds.all;
-            const windSpeed = weatherData.wind.speed;
-            const description = weatherData.weather[0].description;
-            const lightningRisk = description.toLowerCase().includes("thunderstorm");
+            /* Update weather table based on weatherData */
+            const temperatureElement = document.getElementById("temperature");
+            const cloudCoverElement = document.getElementById("cloud-cover");
+            const windSpeedElement = document.getElementById("wind-speed");
+            const skyElement = document.getElementById("sky");
 
-            document.getElementById("temperature").textContent = temperature;
-            document.getElementById("temperature").className = temperature > 273.15 && temperature < 313.15 ? "satisfied" : "not-satisfied";
+            temperatureElement.textContent = weatherData.main.temp;
+            temperatureElement.className = weatherData.main.temp > 273.15 && weatherData.main.temp < 313.15 ? "green" : "red";
 
-            document.getElementById("cloudCover").textContent = cloudCover;
-            document.getElementById("cloudCover").className = cloudCover < 10 ? "satisfied" : "not-satisfied";
+            cloudCoverElement.textContent = weatherData.clouds.all;
+            cloudCoverElement.className = weatherData.clouds.all < 10 ? "green" : "red";
 
-            document.getElementById("windSpeed").textContent = windSpeed;
-            document.getElementById("windSpeed").className = windSpeed < 9.0 ? "satisfied" : "not-satisfied";
+            windSpeedElement.textContent = weatherData.wind.speed;
+            windSpeedElement.className = weatherData.wind.speed < 9.0 ? "green" : "red";
 
-            document.getElementById("sky").textContent = description;
-            document.getElementById("sky").className = (!description.toLowerCase().includes("rain") && !description.toLowerCase().includes("drizzle")) ? "satisfied" : "not-satisfied";
-
-            document.getElementById("lightningRisk").textContent = lightningRisk;
-            document.getElementById("lightningRisk").className = !lightningRisk ? "satisfied" : "not-satisfied";
+            skyElement.textContent = weatherData.weather[0].description;
+            skyElement.className = (!weatherData.weather[0].description.toLowerCase().includes("rain") && !weatherData.weather[0].description.toLowerCase().includes("drizzle")) ? "green" : "red";
         }
 
         function checkLaunchSuitability(weatherData) {
+            /* Check launch suitability based on weatherData and update the suitability message */
             const temperature = weatherData.main.temp;
             const cloudCover = weatherData.clouds.all;
             const windSpeed = weatherData.wind.speed;
             const description = weatherData.weather[0].description;
-            const lightningRisk = description.toLowerCase().includes("thunderstorm");
 
             const clearSkies = cloudCover < 10;
             const lowWindSpeed = windSpeed < 9.0;
             const dryWeather = !description.toLowerCase().includes("rain") && !description.toLowerCase().includes("drizzle");
             const moderateTemperature = temperature > 273.15 && temperature < 313.15;
-            const lowLightningRisk = !lightningRisk;
 
-            const launchSuitability = clearSkies && lowWindSpeed && dryWeather && moderateTemperature && lowLightningRisk;
+            const launchSuitabilityElement = document.getElementById("launch-suitability");
+            const launchSuitability = clearSkies && lowWindSpeed && dryWeather && moderateTemperature;
 
-            const suitabilityMessage = launchSuitability ? "Ideal conditions for a student rocket launch!" : "Not ideal conditions for a student rocket launch.";
+            launchSuitabilityElement.textContent = launchSuitability ? "Ideal conditions for a student rocket launch!" : "Not ideal conditions for a student rocket launch!";
+            launchSuitabilityElement.className = launchSuitability ? "green" : "red";
+        }
 
-            document.getElementById("launchSuitability").textContent = suitabilityMessage;
-            document.getElementById("launchSuitability").className = launchSuitability ? "satisfied" : "not-satisfied";
+        function getNextLaunchTime() {
+            /* Calculate and display the next launch time */
+            const now = new Date();
+            const nextLaunchTimeElement = document.getElementById("next-launch-time");
+            const oneHourLater = new Date(now.getTime() + 60 * 60 * 1000); // One hour later
+
+            const dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const timeOptions = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
+
+            nextLaunchTimeElement.textContent = `Next suitable launch time: ${oneHourLater.toLocaleDateString(undefined, dateOptions)} ${oneHourLater.toLocaleTimeString(undefined, timeOptions)}`;
+        }
+
+        function getBestLaunchTime() {
+            /* Calculate and display the best launch time for the next 4 days */
+            const now = new Date();
+            const fourDaysLater = new Date(now.getTime() + 4 * 24 * 60 * 60 * 1000); // Four days later
+
+            const dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const timeOptions = { hour: '2-digit', minute: '2-digit' };
+
+            let bestLaunchTime = null;
+            let bestWeatherScore = -1;
+
+            // Iterate over the next 4 days
+            for (let i = 1; i <= 4; i++) {
+                const currentDate = new Date(now.getTime() + i * 24 * 60 * 60 * 1000);
+                const launchDateString = currentDate.toLocaleDateString(undefined, dateOptions);
+
+                // In this example, we assume a random weather score (you can replace this with actual weather data)
+                const weatherScore = Math.random() * 100; // Replace with actual calculation
+
+                if (weatherScore > bestWeatherScore) {
+                    bestWeatherScore = weatherScore;
+                    bestLaunchTime = `Best launch time on ${launchDateString}: ${currentDate.toLocaleTimeString(undefined, timeOptions)}`;
+                }
+            }
+
+            const bestLaunchTimeElement = document.getElementById("best-launch-info");
+            bestLaunchTimeElement.textContent = bestLaunchTime || "No suitable launch time found in the next 4 days.";
         }
     </script>
 </body>
